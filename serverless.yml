@@ -1,0 +1,45 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: justin4
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: aws-lambda-crud-node
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: aws-lambda-crud-node
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-west-2
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource:
+        - arn:aws:dynamodb:us-west-2:976193265135:table/TaskTable
+
+functions:
+  getFunction:
+    handler: src/handler.get
+    events:
+      - httpApi:
+          path: get-data
+          method: get
+  postFunction:
+    handler: src/handler.post
+    events:
+      - httpApi:
+          path: post-data
+          method: get
+
+resources:
+  Resources:
+    TaskTable: 
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: TaskTable
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
