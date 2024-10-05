@@ -5,5 +5,12 @@
     "express": "^4.21.0",
     "serverless-http": "^3.2.0",
     "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "serverless": "^4.4.4"
+  },
+  "scripts": {
+    "deploy": "serverless deploy",
+    "remove": "serverless remove"
   }
 }
