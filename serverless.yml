@@ -14,28 +14,22 @@ provider:
       Action:
         - dynamodb:*
       Resource:
-        - arn:aws:dynamodb:us-west-2:976193265135:table/TaskTable
+        - arn:aws:dynamodb:us-west-2:976193265135:table/ContratacionesTable
 
 functions:
-  getFunction:
-    handler: src/handler.get
+  app:
+    handler: src/handler.handler
     events:
       - httpApi:
-          path: get-data
-          method: get
-  postFunction:
-    handler: src/handler.post
-    events:
-      - httpApi:
-          path: post-data
-          method: get
+          path: /{proxy+}
+          method: ANY
 
 resources:
   Resources:
-    TaskTable: 
+    ContratacionesTable: 
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: TaskTable
+        TableName: ContratacionesTable
         BillingMode: PAY_PER_REQUEST
         AttributeDefinitions:
           - AttributeName: id
