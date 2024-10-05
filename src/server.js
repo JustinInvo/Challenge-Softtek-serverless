@@ -3,6 +3,27 @@ const axios = require('axios');
 const app = express();
 const { v4 } = require('uuid')
 const AWS = require('aws-sdk')
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
+
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Mi API Express',
+      version: '1.0.0',
+    },
+  },
+  apis: ['./src/*.js'], // path to the API docs
+};
+
+const specs = swaggerJsdoc(options);
+
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(specs)
+);
 
 app.use(express.json());
 
@@ -25,6 +46,16 @@ const attributeMap = {
   "url": "url"
 };
 
+
+/**
+ * @swagger
+ * /vehiculos:
+ *   get:
+ *     summary: Recupera una lista de vehículos swapi
+ *     responses:
+ *       200:
+ *         description: Una lista de vehículos swapi
+ */
 app.get('/vehiculos', async (req, res) => {
   const response = await axios.get('https://swapi.py4e.com/api/vehicles/');
   const data = response.data.results.map(item => {
@@ -39,6 +70,30 @@ app.get('/vehiculos', async (req, res) => {
   res.json(data);
 });
 
+/**
+ * @swagger
+ * /contrataciones:
+ *   post:
+ *     summary: Crea una nueva contratación
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *               edad:
+ *                 type: number
+ *               puesto:
+ *                 type: string
+ *               experiencia:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: La contratación fue creada exitosamente
+ */
 app.post('/contrataciones', async (req, res) => {
   const { nombre, edad, puesto, experiencia } = req.body;
   const dynamodb = new AWS.DynamoDB.DocumentClient();
@@ -60,6 +115,15 @@ app.post('/contrataciones', async (req, res) => {
   });
 });
 
+/**
+ * @swagger
+ * /contrataciones:
+ *   get:
+ *     summary: Recupera una lista de contrataciones
+ *     responses:
+ *       200:
+ *         description: Una lista de contrataciones
+ */
 app.get('/contrataciones', async (req, res) => {
   const dynamodb = new AWS.DynamoDB.DocumentClient();
 
